@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+    "compilerOptions": {
+
+        "target": "ES2015",
+        "module": "system",
+        "strict": true,
+        "esModuleInterop": true,
+        "skipLibCheck": true,
+        "forceConsistentCasingInFileNames": true,
+        "noImplicitAny": true,
+        "removeComments": true,
+        "preserveConstEnums": true,
+        "outFile": "build/main.js",
+        "sourceMap": true
+    },
+    "include": ["src/**/*"],
+  }

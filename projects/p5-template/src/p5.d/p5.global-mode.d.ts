@@ -1315,65 +1315,6 @@ declare const PORTRAIT: 'portrait';
 declare function preload(): void;
 
 /**
- *   The setup() function is called once when the 
- *   program starts. It's used to define initial 
- *   environment properties such as screen size and 
- *   background color and to load media such as images 
- *   and fonts as the program starts. There can only be 
- *   one setup() function for each program and it 
- *   shouldn't be called again after its initial 
- *   execution. 
- * 
- *  
- *   Note: Variables declared within setup() are not 
- *   accessible within other functions, including 
- *   draw().
- *
- */
-declare function setup(): void;
-
-/**
- *   Called directly after setup(), the draw() function 
- *   continuously executes the lines of code contained 
- *   inside its block until the program is stopped or 
- *   noLoop() is called. Note if noLoop() is called in 
- *   setup(), draw() will still be executed once before 
- *   stopping. draw() is called automatically and 
- *   should never be called explicitly.  It should 
- *   always be controlled with noLoop(), redraw() and 
- *   loop(). After noLoop() stops the code in draw() 
- *   from executing, redraw() causes the code inside 
- *   draw() to execute once, and loop() will cause the 
- *   code inside draw() to resume executing 
- *   continuously. 
- * 
- *  
- *   The number of times draw() executes in each second 
- *   may be controlled with the frameRate() function. 
- * 
- *  
- *   There can only be one draw() function for each 
- *   sketch, and draw() must exist if you want the code 
- *   to run continuously, or to process events such as 
- *   mousePressed(). Sometimes, you might have an empty 
- *   call to draw() in your program, as shown in the 
- *   above example. 
- * 
- *  
- *   It is important to note that the drawing 
- *   coordinate system will be reset at the beginning 
- *   of each draw() call. If any transformations are 
- *   performed within draw() (ex: scale, rotate, 
- *   translate), their effects will be undone at the 
- *   beginning of draw(), so transformations will not 
- *   accumulate over time. On the other hand, styling 
- *   applied (ex: fill, stroke, etc) will remain in 
- *   effect.
- *
- */
-declare function draw(): void;
-
-/**
  *   Removes the entire p5 sketch. This will remove the 
  *   canvas and any elements created by p5.js. It will 
  *   also stop the draw loop and unbind any properties 

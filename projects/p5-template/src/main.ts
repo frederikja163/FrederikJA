@@ -2,10 +2,8 @@
 
 function setup(): any
 {
-    createCanvas(720, 480);
 }
 
 function draw(): any
 {
-    background(220);
 }

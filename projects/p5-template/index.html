@@ -10,5 +10,14 @@
         <script src="src/main.js"></script>
     </head>
     <body>
+        <main>
+
+        </main>
+        <div>
+            <label for="width">Width</label>
+            <input id="width" type="number" value="1280" onchange="resizeCanvas(parseInt(document.getElementById('width').value), parseInt(document.getElementById('height').value))">
+            <label for="height">height</label>
+            <input id="height" type="number" value="720" onchange="resizeCanvas(parseInt(document.getElementById('width').value), parseInt(document.getElementById('height').value))">
+        </div>
     </body>
 </html>

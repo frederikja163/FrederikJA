@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <title>FrederikJA | Wave Function Collapse</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/p5.js"></script>
+        <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.6.0/addons/p5.sound.min.js"></script> -->
+        <link rel="stylesheet" type="text/css" href="../../style.css">
+        <meta charset="utf-8" />
+        <style>
+            td, td *{
+                width: 50px;
+                height: 50px;
+                font-size:20px;
+            }
+            #tiles > :nth-child(1){
+                display: none;
+            }
+            .remove{
+                width: 25px;
+                height: 25px;
+                font-size: 10px;
+                margin: auto;
+            }
+        </style>
+    </head>
+    <body>
+        <main>
+
+        </main>
+        <div>
+            <button onclick="generate()">Generate</button>
+            <button onclick="next(); drawGrid()">Next</button>
+            <button onclick="clearGrid()">Clear</button> <br>
+            <label for="width">Width</label>
+            <input id="width" type="number" value="1280" onchange="resizeCanvas(parseInt(document.getElementById('width').value), parseInt(document.getElementById('height').value))">
+            <label for="height">height</label>
+            <input id="height" type="number" value="720" onchange="resizeCanvas(parseInt(document.getElementById('width').value), parseInt(document.getElementById('height').value))">
+            <br>
+            <label for="collumns">Collumns</label>
+            <input id="collumns" type="number" onchange="clearGrid()" value="10">
+            <label for="rows">Rows</label>
+            <input id="rows" type="number" onchange="clearGrid()" value="10"> <br>
+            <button onclick="createMutations()">Create Mutations</button>
+            <button onclick="clearTiles()">Clear Tiles</button> <br>
+            <input id="file" type="file" accept="image/jpeg, image/png, image/jpg">
+        </div>
+        <div id="tiles">
+            <table>
+                <tr>
+                    <td></td>
+                    <td><input class="top" type="text"></td>
+                    <td><button class="remove">X</button></td>
+                </tr>
+                <tr>
+                    <td><input class="left" type="text"></td>
+                    <td><img class="preview"></td>
+                    <td><input class="right" type="text"></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><input class="bottom" type="text"></td>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+        <script src="src/main.js"></script>
+    </body>
+</html>

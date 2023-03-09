@@ -7,7 +7,7 @@ const rowsElem: HTMLInputElement = document.querySelector("#rows") as HTMLInputE
 const templateElem: HTMLElement = document.querySelector("#tiles :nth-child(1)");
 const tilesElem: HTMLDivElement = document.querySelector("#tiles") as HTMLDivElement;
 const tiles: Tile[] = [];
-const grid: Cell[] = [];
+const grid: Cell[][] = [];
 let collumns: number = -1;
 let rows: number = -1;
 
@@ -23,23 +23,11 @@ function setup(): any
 
 function generate(): void
 {
-    let count: number = 0;
-    for (let i: number = 0; i < grid.length; i++){
-        if (grid[i].possibleTiles.length !== 1){
-            count += 1;
-        }
-    }
-
     function generateRec(){
-        let running: boolean = true;
-        setTimeout(() => running = false, 1000);
-        while (running && count > 0)
-        {
-            next();
-            count -= 1;
-        }
+        let iter: number = 100;
+        while (next() && iter-- > 0);
         drawGrid();
-        if (count > 0){
+        if (next()){
             requestAnimationFrame(generateRec);
         }
     }
@@ -51,30 +39,33 @@ function drawGrid(): void
     background(0x2e);
     for (let y: number = 0; y < rows; y++){
         for (let x: number = 0; x < collumns; x++){
-            grid[y * rows + x].draw();
+            grid[y][x].draw();
         }
     }
 }
 
-function next(): void
+function next(): boolean
 {
     // Find all cells with the lowest entropy;
     const lowestEntropyCells: Cell[] = [];
     let lowestEntropy: number = Infinity;
-    for (let i = 0; i < rows * collumns; i++){
-        const entropy: number = grid[i].possibleTiles.length;
-
-        if (entropy <= 1){
-            continue;
-        }
-
-        if (entropy < lowestEntropy){
-            lowestEntropyCells.splice(0);
-            lowestEntropy = entropy;
-        }
-
-        if (entropy === lowestEntropy){
-            lowestEntropyCells.push(grid[i]);
+    for (let i: number = 0; i < grid.length; i++)
+    {
+        for (let j: number = 0; j < grid[i].length; j++){
+            const entropy: number = grid[i][j].possibleTiles.length;
+            
+            if (entropy <= 1){
+                continue;
+            }
+            
+            if (entropy < lowestEntropy){
+                lowestEntropyCells.splice(0);
+                lowestEntropy = entropy;
+            }
+            
+            if (entropy === lowestEntropy){
+                lowestEntropyCells.push(grid[i][j]);
+            }
         }
     }
 
@@ -90,7 +81,9 @@ function next(): void
         
         // Eliminate possibilities around chosen cell.
         randomCell.eliminatePossibilitiesAround();
+        return true;
     }
+    return false;
 }
 
 function clearGrid(){
@@ -106,9 +99,9 @@ function clearGrid(){
 
     grid.splice(0);
     for (let y: number = 0; y < rows; y++){
+        grid[y] = [];
         for (let x: number = 0; x < collumns; x++){
-            grid[y * rows + x] = new Cell(x, y);
-            console.log(x, y, y * rows + x);
+            grid[y][x] = new Cell(x, y);
         }
     }
 }
@@ -179,10 +172,10 @@ class Cell
     {
         const yCoord = this.y + y;
         const xCoord = this.x + x;
-        if (yCoord < 0 || yCoord > rows || xCoord < 0 || xCoord > collumns){
+        if (yCoord < 0 || yCoord >= rows || xCoord < 0 || xCoord >= collumns){
             return undefined;
         }
-        return grid[(this.y + y) * rows + this.x + x];
+        return grid[yCoord][xCoord];
     }
 
     private getRelativeCellDirection(direction: Direction): Cell | undefined{
@@ -219,6 +212,10 @@ class Cell
 
     private eliminatePossibilities(): void
     {
+        if (this.possibleTiles.length <= 1){
+            return;
+        }
+
         // Stop short-circuiting the boolean expression by first caching the results.
         const top: boolean = this.eliminatePossibileTilesDirectional(Direction.top);
         const right: boolean = this.eliminatePossibileTilesDirectional(Direction.right);

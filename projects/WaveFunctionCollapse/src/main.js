@@ -15,21 +15,12 @@ function setup() {
     clearGrid();
 }
 function generate() {
-    var count = 0;
-    for (var i = 0; i < grid.length; i++) {
-        if (grid[i].possibleTiles.length !== 1) {
-            count += 1;
-        }
-    }
     function generateRec() {
-        var running = true;
-        setTimeout(function () { return running = false; }, 1000);
-        while (running && count > 0) {
-            next();
-            count -= 1;
-        }
+        var iter = 100;
+        while (next() && iter-- > 0)
+            ;
         drawGrid();
-        if (count > 0) {
+        if (next()) {
             requestAnimationFrame(generateRec);
         }
     }
@@ -39,7 +30,7 @@ function drawGrid() {
     background(0x2e);
     for (var y = 0; y < rows; y++) {
         for (var x = 0; x < collumns; x++) {
-            grid[y * rows + x].draw();
+            grid[y][x].draw();
         }
     }
 }
@@ -47,17 +38,19 @@ function next() {
     // Find all cells with the lowest entropy;
     var lowestEntropyCells = [];
     var lowestEntropy = Infinity;
-    for (var i = 0; i < rows * collumns; i++) {
-        var entropy = grid[i].possibleTiles.length;
-        if (entropy <= 1) {
-            continue;
-        }
-        if (entropy < lowestEntropy) {
-            lowestEntropyCells.splice(0);
-            lowestEntropy = entropy;
-        }
-        if (entropy === lowestEntropy) {
-            lowestEntropyCells.push(grid[i]);
+    for (var i = 0; i < grid.length; i++) {
+        for (var j = 0; j < grid[i].length; j++) {
+            var entropy = grid[i][j].possibleTiles.length;
+            if (entropy <= 1) {
+                continue;
+            }
+            if (entropy < lowestEntropy) {
+                lowestEntropyCells.splice(0);
+                lowestEntropy = entropy;
+            }
+            if (entropy === lowestEntropy) {
+                lowestEntropyCells.push(grid[i][j]);
+            }
         }
     }
     // Pick cell and tile at random.
@@ -69,7 +62,9 @@ function next() {
         randomCell.possibleTiles.push(randomTile);
         // Eliminate possibilities around chosen cell.
         randomCell.eliminatePossibilitiesAround();
+        return true;
     }
+    return false;
 }
 function clearGrid() {
     background(0x2e);
@@ -83,9 +78,9 @@ function clearGrid() {
     }
     grid.splice(0);
     for (var y = 0; y < rows; y++) {
+        grid[y] = [];
         for (var x = 0; x < collumns; x++) {
-            grid[y * rows + x] = new Cell(x, y);
-            console.log(x, y, y * rows + x);
+            grid[y][x] = new Cell(x, y);
         }
     }
 }
@@ -139,10 +134,10 @@ var Cell = /** @class */ (function () {
     Cell.prototype.getRelativeCellXY = function (x, y) {
         var yCoord = this.y + y;
         var xCoord = this.x + x;
-        if (yCoord < 0 || yCoord > rows || xCoord < 0 || xCoord > collumns) {
+        if (yCoord < 0 || yCoord >= rows || xCoord < 0 || xCoord >= collumns) {
             return undefined;
         }
-        return grid[(this.y + y) * rows + this.x + x];
+        return grid[yCoord][xCoord];
     };
     Cell.prototype.getRelativeCellDirection = function (direction) {
         switch (direction) {
@@ -175,6 +170,9 @@ var Cell = /** @class */ (function () {
         }
     };
     Cell.prototype.eliminatePossibilities = function () {
+        if (this.possibleTiles.length <= 1) {
+            return;
+        }
         // Stop short-circuiting the boolean expression by first caching the results.
         var top = this.eliminatePossibileTilesDirectional(Direction.top);
         var right = this.eliminatePossibileTilesDirectional(Direction.right);
